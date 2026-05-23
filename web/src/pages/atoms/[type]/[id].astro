@@ -1,0 +1,63 @@
+---
+import Base from "../../../layouts/Base.astro";
+import catalog from "../../../../public/exports/catalog.json";
+
+export function getStaticPaths() {
+  return catalog.atoms.map((atom: any) => ({
+    params: { type: atom.type, id: atom.id },
+    props: { atom },
+  }));
+}
+
+const { atom } = Astro.props;
+
+const profiles = [
+  { key: "tutorial_profile", label: "Tutorial" },
+  { key: "explanation_profile", label: "Explanation" },
+  { key: "runbook_profile", label: "Runbook" },
+  { key: "how_to_profile", label: "How-to" },
+  { key: "reference_profile", label: "Reference guide" },
+];
+---
+<Base title={atom.name} description={atom.summary ?? `${atom.type} atom`}>
+  <p><a href="/atoms/">← All atoms</a></p>
+  <h1>{atom.name}</h1>
+  <p style="color: var(--muted);">
+    <code>{atom.type}</code> · <code>v{atom.version}</code>
+  </p>
+
+  {atom.summary && <p>{atom.summary}</p>}
+
+  {atom.audience && atom.audience.length > 0 && (
+    <p>
+      Audience: {atom.audience.map((a: string) => (
+        <code style="margin-right: 0.5rem;">{a}</code>
+      ))}
+    </p>
+  )}
+
+  {atom.tags && atom.tags.length > 0 && (
+    <p>
+      Tags: {atom.tags.map((tag: string) => (
+        <span style="display: inline-block; font-size: 0.875rem; background: #f4ece4; padding: 0.125rem 0.5rem; border-radius: 0.25rem; margin-right: 0.25rem;">{tag}</span>
+      ))}
+    </p>
+  )}
+
+  {profiles.map(({ key, label }) => atom[key] && (
+    <section>
+      <h2>{label} profile</h2>
+      <dl style="display: grid; grid-template-columns: max-content 1fr; gap: 0.5rem 1rem;">
+        {Object.entries(atom[key]).map(([k, v]: [string, any]) => (
+          <>
+            <dt>{k}</dt>
+            <dd>{Array.isArray(v) ? v.join(", ") : typeof v === "object" ? JSON.stringify(v) : String(v)}</dd>
+          </>
+        ))}
+      </dl>
+    </section>
+  ))}
+
+  <h2>Raw atom</h2>
+  <p><a href={`/atoms/${atom.type}/${atom.id}.json`}>/atoms/{atom.type}/{atom.id}.json</a> · <a href="/schemas/atom-v1.json">schema</a></p>
+</Base>

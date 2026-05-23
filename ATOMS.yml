@@ -1,0 +1,48 @@
+# ATOMS.yml — catalog manifest for doc-atoms
+#
+# See https://github.com/convergent-systems-co/atoms-spec for the canonical schema this conforms to.
+
+spec_version: atoms-spec/v1.1.0
+name: doc-atoms
+version: 0.1.0
+canonical_domain: doc-atoms.com
+federation: convergent-systems.co
+
+purpose: |
+  Explanatory documentation as atoms — tutorials, explanations, runbooks,
+  how-tos, and reference guides. doc-atoms is the narrative/teaching catalog
+  in the ecosystem; it is distinct from schema-atoms, which holds normative
+  specs and JSON Schemas. Specs are versioned and amended; documentation
+  explains, narrates, or teaches and is not normative (atoms-spec/v1.1.0
+  Part II — "Distinction from doc-atoms").
+
+atom_types:
+  - tutorial
+  - explanation
+  - runbook
+  - how-to
+  - reference-guide
+
+composition_type: documents
+composition_dir: documents/
+
+# NEW v1.1.0
+signing:
+  required_algorithms: ["ml-dsa-65"]
+  accepted_algorithms: ["ml-dsa-65", "ml-dsa-44"]
+  quorum_rules:
+    default: "1 of role:catalog-maintainer"
+    "governance/*": "1 of role:catalog-maintainer + 1 of role:ratifier"
+
+# NEW v1.1.0
+lifecycle:
+  current: "bootstrap"  # bootstrap | published | adopted | historic
+
+licensing:
+  code: "Apache-2.0"
+  data: "CC-BY-4.0"
+
+steward: convergent-systems-co
+infrastructure_operator: convergent-systems-co
+
+runtime_consumers: ["aish", "olympus"]

@@ -1,0 +1,41 @@
+---
+import Base from "../layouts/Base.astro";
+---
+<Base title="How to use" description="How to consume doc-atoms in your application.">
+  <h1>How to use doc-atoms</h1>
+
+  <h2>Read the catalog over HTTPS</h2>
+  <p>Every artifact is served under stable URLs with correct content-types:</p>
+  <pre><code>curl https://doc-atoms.com/exports/catalog.json
+curl https://doc-atoms.com/atoms/tutorial/getting-started.json
+curl https://doc-atoms.com/documents/onboarding.json
+curl https://doc-atoms.com/schemas/atom-v1.json
+curl https://doc-atoms.com/schemas/composition-v1.json</code></pre>
+
+  <h2>Resolve a document composition</h2>
+  <p>A document composition lists references to atoms by URI and version.
+  To assemble the document, fetch each referenced atom and concatenate or
+  render in the order the composition specifies.</p>
+
+  <pre><code>{`// pseudo-code
+const composition = await fetch("/documents/onboarding.json").then(r => r.json());
+const refs = composition.references;
+const tutorials = await Promise.all((refs.tutorials ?? []).map(r => fetch(uriToUrl(r.ref)).then(r => r.json())));
+const howTos = await Promise.all((refs.how_tos ?? []).map(r => fetch(uriToUrl(r.ref)).then(r => r.json())));
+const document = renderDocument({ tutorials, howTos });`}</code></pre>
+
+  <h2>Boundary with schema-atoms</h2>
+  <p>doc-atoms is narrative. schema-atoms is normative. If you need the
+  contract a runtime must conform to, look in
+  <a href="https://github.com/convergent-systems-co/schema-atoms">schema-atoms</a>.
+  If you need a tutorial, runbook, or explanation that teaches how to
+  use that contract, look here. The two catalogs are designed to cite
+  each other — explanation atoms reference the spec atoms they explain.</p>
+
+  <h2>Verification</h2>
+  <p>Per <code>atoms-spec/v1.1.0</code>, every atom in the catalog is signed
+  (ML-DSA-65 is the Phase 1 baseline). Consumers SHOULD verify signatures
+  before treating an atom as authoritative — even for documentation,
+  signature verification is how you know the file you fetched is the one
+  the steward published.</p>
+</Base>
