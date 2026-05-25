@@ -1,5 +1,4 @@
 ---
-import Base from "../layouts/Base.astro";
 import catalog from "../../public/exports/catalog.json";
 const counts = {
   atoms: catalog.atoms.length,
@@ -7,45 +6,88 @@ const counts = {
 };
 const byType: Record<string, number> = {};
 for (const a of catalog.atoms) byType[a.type] = (byType[a.type] ?? 0) + 1;
+
+const title = "doc-atoms";
+const tagline = "Explanatory documentation as atoms — tutorials, explanations, runbooks, how-tos, reference guides.";
 ---
-<Base title="Home" description="Explanatory documentation as atoms — tutorials, explanations, runbooks, how-tos, reference guides.">
-  <h1>doc-atoms</h1>
-  <p style="font-size: 1.125rem; color: var(--muted); max-width: 40rem;">
-    Explanatory documentation as atoms — tutorials, explanations,
-    runbooks, how-tos, and reference guides. The narrative/teaching
-    catalog of the <code>convergent-systems.co</code> ecosystem.
-  </p>
 
-  <p>
-    doc-atoms is <strong>not</strong> <a href="https://github.com/convergent-systems-co/schema-atoms">schema-atoms</a>.
-    schema-atoms is normative (specs and JSON Schemas). doc-atoms is
-    explanatory (narrates, teaches, illustrates). If it tells you how
-    to do something, it lives here. If it tells you what conformance
-    requires, it lives there.
-  </p>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={tagline} />
+    <title>{title}</title>
+    <link rel="icon" type="image/svg+xml" href="https://brand-atoms.com/dist/brands/atom-family/1.0.0/assets/favicon.svg" />
+    <link rel="preconnect" href="https://brand-atoms.com" />
+    <link rel="stylesheet" href="https://brand-atoms.com/dist/brands/atom-family/1.0.0/css/tokens.css" />
+    <link rel="stylesheet" href="https://brand-atoms.com/dist/brands/atom-family/1.0.0/ui/atoms-catalog.css" />
+    <style>
+      body { min-height: 100vh; }
+      .hero-mark { width: 160px; height: 160px; margin-bottom: 20px; object-fit: contain; }
+      .sidenav-wordmark { width: 140px; object-fit: contain; display: block; }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <main class="content">
+        <section class="hero">
+          <img src="https://brand-atoms.com/dist/brands/atom-family/1.0.0/assets/atom-family-icon.png" alt="atom-family" class="hero-mark" />
+          <h1>{title}</h1>
+          <p class="lede">{tagline}</p>
+        </section>
 
-  <h2>Catalog at v{catalog.version}</h2>
-  <ul>
-    <li><strong>{counts.atoms}</strong> atoms across {Object.keys(byType).length} types</li>
-    <li><strong>{counts.compositions}</strong> document compositions</li>
-  </ul>
+        <p style="font-size: 1.125rem; color: var(--muted); max-width: 40rem;">
+          Explanatory documentation as atoms — tutorials, explanations,
+          runbooks, how-tos, and reference guides. The narrative/teaching
+          catalog of the <code>convergent-systems.co</code> ecosystem.
+        </p>
 
-  <h2>Atom types</h2>
-  <ul>
-    <li><code>tutorial</code> — guided learning, opinionated path from zero</li>
-    <li><code>explanation</code> — clarifying narrative, the "why" behind a concept</li>
-    <li><code>runbook</code> — operational procedure, ordered steps for a known scenario</li>
-    <li><code>how-to</code> — focused task answer, problem-shaped</li>
-    <li><code>reference-guide</code> — lookup-shaped, organized for non-linear reading</li>
-  </ul>
+        <p>
+          doc-atoms is <strong>not</strong> <a href="https://github.com/convergent-systems-co/schema-atoms">schema-atoms</a>.
+          schema-atoms is normative (specs and JSON Schemas). doc-atoms is
+          explanatory (narrates, teaches, illustrates). If it tells you how
+          to do something, it lives here. If it tells you what conformance
+          requires, it lives there.
+        </p>
 
-  <h2>Civilization-grade properties</h2>
-  <ul>
-    <li><strong>Typed</strong> — every atom and composition validates against a JSON Schema.</li>
-    <li><strong>Versioned</strong> — every atom has a semver <code>version</code> field; compositions pin by version.</li>
-    <li><strong>Machine-readable</strong> — <a href="/exports/catalog.json">/exports/catalog.json</a> is the canonical manifest.</li>
-    <li><strong>Composable</strong> — compositions reference atoms by ID; references resolve in CI.</li>
-    <li><strong>Open</strong> — Apache-2.0 (code) + CC-BY-4.0 (data).</li>
-    <li><strong>Signed</strong> — atoms-spec/v1.1.0 ML-DSA-65 signatures, post-quantum from inception.</li>
-  </ul>
-</Base>
+        <h2>Catalog at v{catalog.version}</h2>
+        <ul>
+          <li><strong>{counts.atoms}</strong> atoms across {Object.keys(byType).length} types</li>
+          <li><strong>{counts.compositions}</strong> document compositions</li>
+        </ul>
+
+        <h2>Atom types</h2>
+        <ul>
+          <li><code>tutorial</code> — guided learning, opinionated path from zero</li>
+          <li><code>explanation</code> — clarifying narrative, the "why" behind a concept</li>
+          <li><code>runbook</code> — operational procedure, ordered steps for a known scenario</li>
+          <li><code>how-to</code> — focused task answer, problem-shaped</li>
+          <li><code>reference-guide</code> — lookup-shaped, organized for non-linear reading</li>
+        </ul>
+
+        <h2>Civilization-grade properties</h2>
+        <ul>
+          <li><strong>Typed</strong> — every atom and composition validates against a JSON Schema.</li>
+          <li><strong>Versioned</strong> — every atom has a semver <code>version</code> field; compositions pin by version.</li>
+          <li><strong>Machine-readable</strong> — <a href="/exports/catalog.json">/exports/catalog.json</a> is the canonical manifest.</li>
+          <li><strong>Composable</strong> — compositions reference atoms by ID; references resolve in CI.</li>
+          <li><strong>Open</strong> — Apache-2.0 (code) + CC-BY-4.0 (data).</li>
+          <li><strong>Signed</strong> — atoms-spec/v1.1.0 ML-DSA-65 signatures, post-quantum from inception.</li>
+        </ul>
+
+        <footer>
+          Part of the <a href="https://github.com/convergent-systems-co/atoms">atoms ecosystem</a>. Apache-2.0.
+        </footer>
+      </main>
+      <nav class="sidenav">
+        <a class="brand" href="/">
+          <img src="https://brand-atoms.com/dist/brands/atom-family/1.0.0/assets/atom-family-wordmark.png" alt="ATOMS" class="sidenav-wordmark" />
+        </a>
+        <div class="aside-meta">
+          <a class="meta-link" href="https://github.com/convergent-systems-co/doc-atoms">github ↗</a>
+        </div>
+      </nav>
+    </div>
+  </body>
+</html>
