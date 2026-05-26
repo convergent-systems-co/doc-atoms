@@ -1,0 +1,19 @@
+{
+  "schema": "https://doc-atoms.com/schemas/atom-v1.json",
+  "type": "tutorial",
+  "id": "how-to-create-a-json-schema-atom",
+  "version": "0.1.0",
+  "name": "How to Create a json-schema Atom",
+  "summary": "Step-by-step tutorial for publishing a JSON Schema document as a json-schema type atom in schema-atoms.",
+  "audience": ["contributor"],
+  "tags": ["schema-atoms", "json-schema", "authoring", "publishing"],
+  "prerequisites": ["what-is-a-grammar-atom"],
+  "tutorial_profile": {
+    "estimated_minutes": 20,
+    "outcome": "You have a valid json-schema atom file committed to schema-atoms/atoms/ and can reference it by its stable atom ID from any catalog."
+  },
+  "body": {
+    "format": "markdown",
+    "inline": "## Overview\n\nA *json-schema atom* is a versioned JSON Schema document stored in schema-atoms and addressable by a stable ID. Once published, any catalog can reference it in its grammar atom or validator configuration.\n\n## Steps\n\n### 1. Identify the schema you want to publish\n\nDecide the logical name for your schema. Use kebab-case. Examples: `persona-v1`, `prompt-fragment-v1`, `key-rotation-policy-v1`. The name becomes the atom ID and must be unique across schema-atoms.\n\n### 2. Create the schema file\n\n```bash\n# Inside a feat/* worktree on schema-atoms\nmkdir -p atoms/json-schema\ntouch atoms/json-schema/<your-name>.json\n```\n\nStart with the canonical header:\n\n```json\n{\n  \"$schema\": \"https://json-schema.org/draft/2020-12/schema\",\n  \"$id\": \"https://schema-atoms.com/schemas/<your-name>.json\",\n  \"title\": \"<Human readable title>\",\n  \"description\": \"<One sentence: what this schema validates>\",\n  \"type\": \"object\",\n  \"required\": [],\n  \"additionalProperties\": false,\n  \"properties\": {}\n}\n```\n\n### 3. Write the atom wrapper\n\nEvery schema-atoms atom has a JSON wrapper that conforms to the schema-atoms atom-v1 grammar. Create `atoms/json-schema/<your-name>-atom.json`:\n\n```json\n{\n  \"schema\": \"https://schema-atoms.com/schemas/atom-v1.json\",\n  \"type\": \"json-schema\",\n  \"id\": \"<your-name>\",\n  \"version\": \"0.1.0\",\n  \"name\": \"<Human-readable name>\",\n  \"summary\": \"<One sentence summary>\",\n  \"audience\": [\"contributor\"],\n  \"tags\": [],\n  \"body\": {\n    \"format\": \"markdown\",\n    \"inline\": \"Inline description or leave path to the .json schema file.\"\n  }\n}\n```\n\n### 4. Run the validator\n\n```bash\ncd schema-atoms\npython3 scripts/validate.py\n```\n\nFix any validation errors reported against `atom-v1.json` before continuing.\n\n### 5. Sign the atom\n\n```bash\nnode scripts/sign-atoms.mjs\n```\n\nThis requires the 1Password CLI (`op`) authenticated to the \"Convergent Systems LLC\" vault. The script writes signatures to `keys/`.\n\n### 6. Commit and open a PR\n\n```bash\ngit add atoms/json-schema/<your-name>.json atoms/json-schema/<your-name>-atom.json keys/\ngit commit -m \"feat: add <your-name> json-schema atom v0.1.0\"\ngit push origin feat/<your-name>\ngh pr create --repo convergent-systems-co/schema-atoms\n```\n\nThe CI workflow validates all atoms on every PR. Merge only after CI is green.\n\n## Verification\n\nAfter merging, confirm the atom is resolvable:\n\n```bash\ncurl https://schema-atoms.com/atoms/json-schema/<your-name>.json\n```\n\nYou should receive the atom JSON with a 200 status code."
+  }
+}

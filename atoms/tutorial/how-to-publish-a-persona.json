@@ -1,0 +1,19 @@
+{
+  "schema": "https://doc-atoms.com/schemas/atom-v1.json",
+  "type": "tutorial",
+  "id": "how-to-publish-a-persona",
+  "version": "0.1.0",
+  "name": "How to Create and Publish a Persona Atom",
+  "summary": "Tutorial for creating a persona atom in persona-atoms, from TOML authorship to signed publication.",
+  "audience": ["contributor"],
+  "tags": ["persona-atoms", "toml", "authoring", "publishing"],
+  "prerequisites": ["what-is-a-grammar-atom"],
+  "tutorial_profile": {
+    "estimated_minutes": 30,
+    "outcome": "You have a valid persona atom signed and published to persona-atoms, referenceable from composition-atoms or any agent assembly pipeline."
+  },
+  "body": {
+    "format": "markdown",
+    "inline": "## Overview\n\nA *persona atom* defines the stable identity of an AI agent: its role, voice, constraints, and behavioral contracts. Personas live in persona-atoms and are composed with prompt fragments, context, and tools at assembly time. This tutorial walks you from a blank file to a signed, published persona.\n\n## Steps\n\n### 1. Understand what a persona is\n\nA persona atom answers: *who is this agent?* It is distinct from a prompt fragment (what it says) and a tool (what it can do). A persona should be stable across deployments — it defines identity, not capability.\n\n### 2. Create a TOML source file\n\nPersona atoms are authored in TOML for human readability and converted to JSON at publish time. Create `atoms/persona/<your-persona>.toml`:\n\n```toml\nschema = \"https://persona-atoms.com/schemas/atom-v1.json\"\ntype = \"persona\"\nid = \"<kebab-case-id>\"\nversion = \"0.1.0\"\nname = \"<Human-readable name>\"\nsummary = \"<One sentence describing who this persona is>\"\naudience = [\"contributor\", \"operator\"]\ntags = []\n\n[body]\nformat = \"markdown\"\ninline = \"\"\"\n## Role\n<Describe the role in 1-2 sentences.>\n\n## Voice\n<Describe the tone and communication style.>\n\n## Constraints\n- <Behavioral constraint 1>\n- <Behavioral constraint 2>\n\n## Identity contracts\n<What invariants the persona always upholds.>\n\"\"\"\n```\n\n### 3. Convert TOML to JSON\n\n```bash\ncd persona-atoms\npython3 scripts/toml_to_json.py atoms/persona/<your-persona>.toml > atoms/persona/<your-persona>.json\n```\n\n### 4. Run the validator\n\n```bash\npython3 scripts/validate.py\n```\n\nFix any errors against the persona-atoms `atom-v1.json` schema.\n\n### 5. Sign the atom\n\n```bash\nnode scripts/sign-atoms.mjs\n```\n\nRequires `op` CLI authenticated to the \"Convergent Systems LLC\" vault.\n\n### 6. Update exports/catalog.json\n\nAdd an entry for your new persona to the `atoms` array in `exports/catalog.json`.\n\n### 7. Commit and open a PR\n\n```bash\ngit add atoms/persona/<your-persona>.json keys/ exports/catalog.json\ngit commit -m \"feat: add <your-persona> persona atom v0.1.0\"\ngit push origin feat/<your-persona>\ngh pr create --repo convergent-systems-co/persona-atoms\n```\n\n## Verification\n\nAfter the PR merges and Cloudflare Pages deploys:\n\n```bash\ncurl https://persona-atoms.com/atoms/persona/<your-persona>.json\n```\n\nExpect a 200 response with the full atom JSON."
+  }
+}

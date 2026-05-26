@@ -1,0 +1,19 @@
+{
+  "schema": "https://doc-atoms.com/schemas/atom-v1.json",
+  "type": "runbook",
+  "id": "sign-atoms",
+  "version": "0.1.0",
+  "name": "Sign Atoms with the Root Key",
+  "summary": "Runbook for signing atoms using scripts/sign-atoms.mjs. Requires the op CLI authenticated to the 1Password vault 'Convergent Systems LLC'.",
+  "audience": ["contributor", "operator"],
+  "tags": ["signing", "1password", "security", "release"],
+  "runbook_profile": {
+    "scenario": "You have new or changed atoms that need to be signed before a release commit or PR merge.",
+    "severity": "info",
+    "escalation": "If the signing script fails with a vault access error, verify your 1Password session and vault membership with the Convergent Systems LLC account owner."
+  },
+  "body": {
+    "format": "markdown",
+    "inline": "## Prerequisites\n\n- Node.js 20+\n- 1Password CLI (`op`) — install via `brew install 1password-cli` on macOS\n- Active 1Password session with access to the \"Convergent Systems LLC\" vault\n- All atoms must pass the validator (see *Run the Catalog Validator* runbook) before signing\n\n## Procedure\n\n### Step 1: Verify 1Password session\n\n```bash\nop whoami\n```\n\nExpected output: your account email. If you see an error, sign in:\n\n```bash\nop signin\n```\n\nFollow the browser prompt. If you use biometric unlock, approve the Touch ID prompt.\n\n### Step 2: Run the signing script\n\n```bash\nnode scripts/sign-atoms.mjs\n```\n\nThe script reads the root key from the 1Password vault, signs each atom file under `atoms/`, and writes signatures to `keys/`.\n\n### Step 3: Verify output\n\n**Success output:**\n\n```\nSigning atoms...\n  Signed: atoms/tutorial/how-to-create-a-json-schema-atom.json → keys/tutorial/how-to-create-a-json-schema-atom.sig\n  ...\nAll N atoms signed.\n```\n\n**Check that signature files exist:**\n\n```bash\nls keys/\n```\n\nYou should see `.sig` files corresponding to every atom.\n\n### Step 4: Stage signature files\n\n```bash\ngit add keys/\n```\n\nSignature files are committed alongside the atom files. They are verified by CI on every push.\n\n## Troubleshooting\n\n| Error | Cause | Fix |\n|---|---|---|\n| `[AUTH_REQUIRED]` | 1Password session expired | Run `op signin` |\n| `item not found: atoms-root-key` | Vault item name mismatch | Confirm item name in 1Password UI |\n| `Cannot find module` | Node deps not installed | Run `npm ci` in the repo root |\n| `Atom X failed validation` | Atom has a schema error | Run the validator and fix before signing |\n\n## Notes\n\n- Signing is required before a release tag. CI enforces signature validity on the release workflow.\n- You do not need to re-sign atoms that have not changed. The script detects changes and only re-signs modified atoms (check `scripts/sign-atoms.mjs` for the exact logic).\n- The root key itself never leaves 1Password — the script uses the `op` CLI to perform the signing operation without writing the key to disk."
+  }
+}

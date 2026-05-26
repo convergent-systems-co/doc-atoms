@@ -1,0 +1,18 @@
+{
+  "schema": "https://doc-atoms.com/schemas/atom-v1.json",
+  "type": "explanation",
+  "id": "what-is-a-grammar-atom",
+  "version": "0.1.0",
+  "name": "What is a Grammar Atom?",
+  "summary": "Explains the grammar atom concept: a TOML file in schema-atoms that defines the structural contract for a catalog's primary atom class.",
+  "audience": ["contributor", "developer"],
+  "tags": ["schema-atoms", "grammar", "contracts", "catalog-design"],
+  "explanation_profile": {
+    "concept": "Grammar atoms as structural contracts for catalog atom classes",
+    "depth": "intermediate"
+  },
+  "body": {
+    "format": "markdown",
+    "inline": "## What is a grammar atom?\n\nA *grammar atom* is a special atom type in schema-atoms that defines the structural contract for a catalog's primary atom class. Where a JSON Schema atom specifies the machine-readable validation rules, a grammar atom provides the human-readable narrative: what fields exist, why they exist, what the invariants are, and how the schema is expected to evolve.\n\n## Why they exist\n\nThe *-atoms ecosystem has 25+ catalogs, each with its own primary atom type. Without grammar atoms, the structural contracts for each type would be scattered across READMEs, ADRs, and comments inside JSON Schema files — discoverable only if you know where to look. Grammar atoms make the contracts first-class citizens of the ecosystem: indexable, linkable, and evolvable through the same PR-and-release process as any other atom.\n\n## Anatomy of a grammar atom\n\nA grammar atom in schema-atoms looks like this:\n\n```json\n{\n  \"schema\": \"https://schema-atoms.com/schemas/atom-v1.json\",\n  \"type\": \"grammar\",\n  \"id\": \"doc-atoms-v1\",\n  \"version\": \"0.1.0\",\n  \"name\": \"doc-atoms v1 atom grammar\",\n  \"summary\": \"Structural contract for doc-atoms primary atom class.\",\n  \"body\": {\n    \"format\": \"markdown\",\n    \"inline\": \"## Required fields\\n...\"\n  }\n}\n```\n\nThe `id` follows the convention `<catalog>-v<major>` to make versioning explicit at a glance.\n\n## Grammar atoms vs JSON Schema atoms\n\n| | Grammar atom | JSON Schema atom |\n|---|---|---|\n| Format | JSON (body is Markdown) | JSON (body references a `.json` schema file) |\n| Purpose | Human-readable narrative contract | Machine-readable validation rules |\n| Consumer | Contributors, reviewers, AI tooling | Validators, CI, code generators |\n| Evolution | Prose amendments, new sections | Additive schema changes with version bump |\n\n## Relationship to catalogs\n\nEach catalog's grammar atom lives in schema-atoms, not in the catalog itself. This separation keeps schema-atoms as the single authoritative registry of structural contracts while keeping catalog repos focused on their own atom content. A catalog's CI pipeline references its grammar atom ID when running the validator."
+  }
+}

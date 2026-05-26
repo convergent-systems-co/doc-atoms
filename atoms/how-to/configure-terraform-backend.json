@@ -1,0 +1,18 @@
+{
+  "schema": "https://doc-atoms.com/schemas/atom-v1.json",
+  "type": "how-to",
+  "id": "configure-terraform-backend",
+  "version": "0.1.0",
+  "name": "Configure the R2 Terraform Backend",
+  "summary": "How to fill in backend.tf for a *-atoms repo using the shared cs-tfstate R2 bucket so Terraform state is centralized and not committed to the repo.",
+  "audience": ["contributor", "operator"],
+  "tags": ["terraform", "r2", "cloudflare", "infrastructure", "state"],
+  "how_to_profile": {
+    "task": "Configure Terraform remote state backend pointing at the shared cs-tfstate R2 bucket",
+    "applies_to": ["any *-atoms catalog with infra/ Terraform code"]
+  },
+  "body": {
+    "format": "markdown",
+    "inline": "## When to do this\n\nDo this when setting up Terraform infrastructure for a new *-atoms catalog. Every catalog with an `infra/` directory uses the shared `cs-tfstate` R2 bucket for state storage rather than local state files.\n\n## Prerequisites\n\n- Terraform 1.6+\n- Access to the Cloudflare R2 credentials for `cs-tfstate` (stored in the \"Convergent Systems LLC\" 1Password vault)\n- The catalog's Cloudflare account ID\n\n## Steps\n\n### 1. Locate or create backend.tf\n\nIn the catalog's `infra/terraform/` directory, open (or create) `backend.tf`.\n\n### 2. Write the backend configuration\n\n```hcl\nterraform {\n  backend \"s3\" {\n    # Cloudflare R2 — S3-compatible\n    bucket = \"cs-tfstate\"\n    key    = \"<catalog-name>/terraform.tfstate\"\n\n    # R2 endpoint — replace <account-id> with the Cloudflare account ID\n    endpoint = \"https://<account-id>.r2.cloudflarestorage.com\"\n\n    # R2 uses access key / secret key from env vars:\n    # AWS_ACCESS_KEY_ID     = R2 token access key\n    # AWS_SECRET_ACCESS_KEY = R2 token secret key\n    region = \"auto\"\n\n    # Disable AWS-specific features not available on R2\n    skip_credentials_validation = true\n    skip_metadata_api_check     = true\n    skip_region_validation      = true\n    force_path_style            = true\n  }\n}\n```\n\nReplace `<catalog-name>` with the catalog's kebab-case name (e.g., `doc-atoms`). This ensures each catalog's state is stored in a separate key within the shared bucket.\n\n### 3. Set R2 credentials as environment variables\n\nNever hardcode credentials in `backend.tf`. Set them in your shell before running Terraform:\n\n```bash\nexport AWS_ACCESS_KEY_ID=\"$(op read 'op://Convergent Systems LLC/cs-tfstate-r2/access-key-id')\"\nexport AWS_SECRET_ACCESS_KEY=\"$(op read 'op://Convergent Systems LLC/cs-tfstate-r2/secret-access-key')\"\n```\n\nFor CI, these are set as GitHub Actions secrets at the org level (see `reference_cloudflare_pages_org_secrets`).\n\n### 4. Initialize Terraform\n\n```bash\ncd infra/terraform\nterraform init\n```\n\nExpected output: `Terraform has been successfully initialized!`\n\n### 5. Verify state storage\n\n```bash\nterraform plan\n```\n\nIf the backend is configured correctly, Terraform will read existing state (or show an empty state for a new catalog) without error.\n\n## Notes\n\n- The `key` value is the only field that varies between catalogs. All other backend settings are identical.\n- Do not commit `terraform.tfstate`, `.terraform/`, or `.terraform.lock.hcl` to the repo. Confirm `.gitignore` excludes them.\n- State for each catalog is isolated by key — a mistake in one catalog's Terraform run cannot affect another catalog's state."
+  }
+}

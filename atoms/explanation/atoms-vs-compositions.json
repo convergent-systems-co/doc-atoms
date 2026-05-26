@@ -1,0 +1,18 @@
+{
+  "schema": "https://doc-atoms.com/schemas/atom-v1.json",
+  "type": "explanation",
+  "id": "atoms-vs-compositions",
+  "version": "0.1.0",
+  "name": "Atoms vs Compositions — What Goes Where?",
+  "summary": "Explains the difference between atoms (reusable primitives) and compositions (assembled higher-order artifacts), and the decision rule for where content belongs.",
+  "audience": ["contributor", "developer"],
+  "tags": ["catalog-design", "composition-atoms", "architecture", "atoms-ecosystem"],
+  "explanation_profile": {
+    "concept": "Atom primitives vs composition assemblies in the *-atoms ecosystem",
+    "depth": "overview"
+  },
+  "body": {
+    "format": "markdown",
+    "inline": "## The core distinction\n\nIn the *-atoms ecosystem, **atoms** are the smallest reusable units of a domain — they have a single clear purpose, a stable ID, and no dependencies on other atoms except through explicit reference. **Compositions** are assemblies of atoms into higher-order artifacts that serve a specific deployment context.\n\nThink of atoms as vocabulary and compositions as sentences.\n\n## Atoms\n\nAn atom is:\n- Stable: its `id` and `version` never change once published\n- Purposeful: it solves exactly one problem in its domain\n- Reusable: it can appear in multiple compositions without modification\n- Self-contained: everything a consumer needs to use it is in the atom JSON itself\n\nExamples: a persona atom defining an agent's identity, a prompt fragment capturing a reasoning instruction, a key-rotation policy document.\n\n## Compositions\n\nA composition is:\n- Assembled: it references atoms by ID and version, never embeds them\n- Context-specific: it exists to satisfy a deployment requirement, not to be reused broadly\n- Versioned separately from its constituent atoms\n- Owned by composition-atoms, not by the source catalog\n\nA composition might assemble a persona atom, three prompt fragments, a context specification, and a tool manifest to produce a fully-specified agent for a particular product integration.\n\n## Decision rule\n\nAsk: *Is this content reusable independently of its deployment context?*\n\n- Yes → atom in the appropriate catalog\n- No → composition in composition-atoms\n\nIf you find yourself writing an atom that only makes sense when combined with another specific atom, that is a sign the two belong in a composition rather than as atoms.\n\n## Common mistakes\n\n**Embedding instead of referencing.** Compositions MUST reference atoms by ID, not copy their content. Copying defeats the stability guarantee — if the atom changes, embedded copies drift silently.\n\n**Putting deployment config in an atom.** Configuration that changes per-environment (API endpoints, tenant IDs, feature flags) belongs in deployment manifests or runtime config, not in atoms.\n\n**Creating a composition atom in the source catalog.** Compositions belong in composition-atoms. A persona catalog should not contain assembled agents."
+  }
+}

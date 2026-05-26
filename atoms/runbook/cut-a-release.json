@@ -1,0 +1,19 @@
+{
+  "schema": "https://doc-atoms.com/schemas/atom-v1.json",
+  "type": "runbook",
+  "id": "cut-a-release",
+  "version": "0.1.0",
+  "name": "Cut a Catalog Release",
+  "summary": "Runbook for tagging and pushing a vX.Y.Z release to trigger the release workflow, update the Cloudflare Pages deployment, and publish a GitHub release.",
+  "audience": ["contributor", "operator"],
+  "tags": ["release", "git-tags", "cloudflare-pages", "github-actions"],
+  "runbook_profile": {
+    "scenario": "The main branch is green and you are ready to cut an official release of a *-atoms catalog.",
+    "severity": "info",
+    "escalation": "If the release workflow fails after tagging, check the Actions run log. For Cloudflare Pages deployment failures, check the Cloudflare dashboard for the affected Pages project."
+  },
+  "body": {
+    "format": "markdown",
+    "inline": "## Prerequisites\n\n- You are on the `main` branch with a clean working tree\n- All atoms are signed (see *Sign Atoms with the Root Key* runbook)\n- `exports/catalog.json` is populated and `built_at` is current\n- CI is green on the latest main commit\n- You know the next version (SemVer: vX.Y.Z)\n\n## Procedure\n\n### Step 1: Confirm you are on a clean main\n\n```bash\ngit checkout main && git pull origin main\ngit status  # must be clean\n```\n\n### Step 2: Update CHANGELOG.md\n\nAdd a new section for the release version. Follow the existing format in the repo. Stage and commit:\n\n```bash\ngit add CHANGELOG.md\ngit commit -m \"chore: update changelog for vX.Y.Z\"\ngit push origin main\n```\n\n### Step 3: Tag the release\n\n```bash\ngit tag vX.Y.Z\ngit push origin vX.Y.Z\n```\n\nPushing the tag triggers the `.github/workflows/release.yml` workflow.\n\n### Step 4: Monitor the release workflow\n\n```bash\ngh run list --repo convergent-systems-co/<catalog> --limit 5\n```\n\nOr watch in the GitHub Actions UI. The workflow will:\n1. Validate all atoms\n2. Verify signatures\n3. Build the static site\n4. Deploy to Cloudflare Pages\n5. Publish a GitHub Release with the catalog export as an asset\n\n### Step 5: Confirm the deployment\n\n```bash\ncurl -s https://<catalog-domain>/exports/catalog.json | jq '.version'\n```\n\nExpected: `\"vX.Y.Z\"` (or the version string you tagged).\n\n### Step 6: Confirm the GitHub Release\n\n```bash\ngh release view vX.Y.Z --repo convergent-systems-co/<catalog>\n```\n\n## Rollback\n\nIf the release is defective after tagging, do NOT delete the tag — this would break any downstream references. Instead:\n\n1. Fix the defect in a new commit on main\n2. Tag a patch release (e.g., `v0.1.1`)\n3. Note the defect in `CHANGELOG.md` under the new version\n\n## Notes\n\n- Release tags are immutable in the *-atoms ecosystem. Once pushed, a tag is never force-updated.\n- The `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` secrets are configured at the `convergent-systems-co` org level and are available to all catalog repos automatically."
+  }
+}

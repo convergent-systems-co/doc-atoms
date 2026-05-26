@@ -1,0 +1,18 @@
+{
+  "schema": "https://doc-atoms.com/schemas/atom-v1.json",
+  "type": "tutorial",
+  "id": "how-to-seed-a-catalog",
+  "version": "0.1.0",
+  "name": "How to Seed a Catalog with Starter Atoms",
+  "summary": "Tutorial for creating the first atoms in a new *-atoms catalog: schemas, seed content, validator, and catalog export.",
+  "audience": ["contributor"],
+  "tags": ["catalog", "authoring", "bootstrapping", "atoms-ecosystem"],
+  "tutorial_profile": {
+    "estimated_minutes": 45,
+    "outcome": "Your new catalog has at least one valid, signed atom, a passing validator run, and a populated catalog.json ready for v0.1.0 release."
+  },
+  "body": {
+    "format": "markdown",
+    "inline": "## Overview\n\nEvery *-atoms catalog follows the same directory layout and lifecycle. This tutorial walks you through the three phases of seeding a catalog from an empty repo to a publishable v0.1.0.\n\n## Phase 1: Define the schema\n\n### 1.1 Copy the schema template\n\nEvery catalog defines its primary atom type in `schemas/atom-v1.json`. Start from the doc-atoms schema as a template:\n\n```bash\ncp /path/to/doc-atoms/schemas/atom-v1.json schemas/atom-v1.json\n```\n\nEdit the `$id`, `title`, `description`, and `properties` to match your catalog's atom type.\n\n### 1.2 Write the grammar atom\n\nA grammar atom in schema-atoms formally registers your schema in the broader ecosystem. See the *How to Create a json-schema Atom* tutorial before proceeding.\n\n## Phase 2: Create seed atoms\n\n### 2.1 Create the atoms directory structure\n\n```bash\nmkdir -p atoms/<primary-type>\n```\n\n### 2.2 Write at least one atom\n\nEach atom is a `.json` file conforming to `schemas/atom-v1.json`. Required fields: `schema`, `type`, `id`, `version`, `name`. Include `summary`, `audience`, and `tags` for discoverability.\n\n```json\n{\n  \"schema\": \"https://<catalog-domain>/schemas/atom-v1.json\",\n  \"type\": \"<your-type>\",\n  \"id\": \"<kebab-case-id>\",\n  \"version\": \"0.1.0\",\n  \"name\": \"<Human name>\",\n  \"summary\": \"<One sentence>\",\n  \"audience\": [\"contributor\"]\n}\n```\n\n## Phase 3: Validate, sign, and export\n\n### 3.1 Run the validator\n\n```bash\npython3 scripts/validate.py\n```\n\nAll atoms must pass before proceeding.\n\n### 3.2 Sign the atoms\n\n```bash\nnode scripts/sign-atoms.mjs\n```\n\nRequires the 1Password CLI (`op`) authenticated to \"Convergent Systems LLC\".\n\n### 3.3 Populate catalog.json\n\nUpdate `exports/catalog.json` to list every atom:\n\n```json\n{\n  \"catalog\": \"<catalog-name>\",\n  \"version\": \"0.1.0\",\n  \"built_at\": \"<ISO-8601 timestamp>\",\n  \"atoms\": [\n    { \"id\": \"<atom-id>\", \"type\": \"<type>\", \"version\": \"0.1.0\", \"path\": \"atoms/<type>/<filename>.json\" }\n  ],\n  \"compositions\": []\n}\n```\n\n### 3.4 Commit and cut the release\n\n```bash\ngit add -A\ngit commit -m \"feat(v0.1): seed <N> atoms\"\ngit push origin feat/<branch>\ngh pr create && # merge after CI green\ngit tag v0.1.0 && git push origin v0.1.0\n```\n\n## Verification\n\nConfirm the catalog is live by requesting the Cloudflare Pages deployment URL and checking that `exports/catalog.json` is served correctly."
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "schema": "https://doc-atoms.com/schemas/atom-v1.json",
+  "type": "how-to",
+  "id": "create-a-grammar-atom",
+  "version": "0.1.0",
+  "name": "Create a Grammar Atom for a New Catalog Class",
+  "summary": "How to add a grammar atom to schema-atoms/atoms/ for a new catalog class, registering its structural contract in the ecosystem.",
+  "audience": ["contributor"],
+  "tags": ["schema-atoms", "grammar", "catalog-design", "authoring"],
+  "prerequisites": ["what-is-a-grammar-atom"],
+  "how_to_profile": {
+    "task": "Register a new catalog's structural contract in schema-atoms",
+    "applies_to": ["schema-atoms", "any new *-atoms catalog"]
+  },
+  "body": {
+    "format": "markdown",
+    "inline": "## When to do this\n\nDo this when you are creating a new *-atoms catalog and need to register its primary atom class in schema-atoms so it is discoverable and formally contracted.\n\n## Steps\n\n### 1. Name the grammar atom\n\nGrammar atom IDs follow the convention `<catalog-name>-v<major>`. For example: `doc-atoms-v1`, `persona-atoms-v1`, `prompt-atoms-v1`.\n\n### 2. Create the atom file\n\nIn a worktree on schema-atoms:\n\n```bash\ntouch atoms/grammar/<catalog-name>-v1.json\n```\n\n### 3. Write the grammar atom JSON\n\n```json\n{\n  \"schema\": \"https://schema-atoms.com/schemas/atom-v1.json\",\n  \"type\": \"grammar\",\n  \"id\": \"<catalog-name>-v1\",\n  \"version\": \"0.1.0\",\n  \"name\": \"<Catalog name> v1 atom grammar\",\n  \"summary\": \"Structural contract for the <catalog name> primary atom class.\",\n  \"audience\": [\"contributor\", \"developer\"],\n  \"tags\": [\"<catalog-name>\", \"grammar\", \"schema\"],\n  \"body\": {\n    \"format\": \"markdown\",\n    \"inline\": \"## Required fields\\n\\n| Field | Type | Description |\\n|---|---|---|\\n| `schema` | string | Must be `https://<catalog-domain>/schemas/atom-v1.json` |\\n| `type` | string | The atom type enum value |\\n| `id` | string | Kebab-case identifier, unique within the catalog |\\n| `version` | string | SemVer string |\\n| `name` | string | Human-readable name |\\n\\n## Optional fields\\n\\n<List optional fields with their purpose>\\n\\n## Invariants\\n\\n<List the invariants that all atoms of this class must satisfy>\"\n  }\n}\n```\n\n### 4. Validate and sign\n\n```bash\npython3 scripts/validate.py\nnode scripts/sign-atoms.mjs\n```\n\n### 5. Update schema-atoms catalog.json\n\nAdd your grammar atom to `exports/catalog.json` in schema-atoms.\n\n### 6. Commit and open a PR against schema-atoms\n\n```bash\ngit add atoms/grammar/<catalog-name>-v1.json keys/ exports/catalog.json\ngit commit -m \"feat: add <catalog-name>-v1 grammar atom\"\ngit push origin feat/<catalog-name>-grammar\ngh pr create --repo convergent-systems-co/schema-atoms\n```\n\n## Notes\n\n- The grammar atom PR on schema-atoms and the seed PR on your new catalog can be opened in parallel, but schema-atoms should merge first so the grammar reference is resolvable before the catalog deploys."
+  }
+}
