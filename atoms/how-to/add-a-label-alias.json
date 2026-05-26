@@ -1,0 +1,18 @@
+{
+  "schema": "https://doc-atoms.com/schemas/atom-v1.json",
+  "type": "how-to",
+  "id": "add-a-label-alias",
+  "version": "0.1.0",
+  "name": "Add a Label Alias to repo-standards",
+  "summary": "How to add a new label mapping to label-aliases.yml in convergent-systems-co/repo-standards so the label-cleanup workflow can migrate it across all org repos.",
+  "audience": ["contributor", "operator"],
+  "tags": ["repo-standards", "labels", "github-actions", "org-maintenance"],
+  "how_to_profile": {
+    "task": "Add a new label alias mapping to the org-wide label cleanup workflow",
+    "applies_to": ["convergent-systems-co/repo-standards", "all org repos"]
+  },
+  "body": {
+    "format": "markdown",
+    "inline": "## When to do this\n\nDo this when you have renamed a label (or want to retire an old label in favor of a new one) and need the change to propagate automatically to all repositories in the `convergent-systems-co` org.\n\n## Steps\n\n### 1. Locate label-aliases.yml\n\n```bash\ngh api repos/convergent-systems-co/repo-standards/contents/label-aliases.yml \\\n  --jq '.download_url' | xargs curl -s\n```\n\nOr clone repo-standards and open `label-aliases.yml` directly.\n\n### 2. Add your mapping\n\nThe file format is a list of `{from, to}` pairs:\n\n```yaml\naliases:\n  - from: \"old-label-name\"\n    to: \"new-label-name\"\n  - from: \"bug\"\n    to: \"type/bug\"\n```\n\nAdd your new mapping at the end of the list. The `from` value is the label to be replaced; `to` is the label it should become.\n\n### 3. Ensure the target label exists in the label definition file\n\nCheck that `to` is listed in `labels.yml` (or equivalent) in repo-standards. If not, add it there too. The cleanup workflow applies aliases only to labels that exist in the canonical definition.\n\n### 4. Commit and open a PR\n\n```bash\ngit add label-aliases.yml\ngit commit -m \"chore: add alias <old> -> <new>\"\ngit push origin feat/label-alias-<new>\ngh pr create --repo convergent-systems-co/repo-standards\n```\n\n### 5. Merge and observe propagation\n\nAfter the PR merges, the label-cleanup workflow runs on a schedule (or you can trigger it manually via `gh workflow run`). Confirm propagation on a sample repo:\n\n```bash\ngh label list --repo convergent-systems-co/<sample-repo> | grep <new-label-name>\n```\n\n## Notes\n\n- Label aliases are additive. Removing a mapping from the file does not undo a completed migration.\n- If a repo has open issues or PRs with the old label, GitHub will update them automatically when the label is renamed via the API."
+  }
+}

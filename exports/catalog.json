@@ -1,7 +1,86 @@
 {
   "catalog": "doc-atoms",
   "version": "0.1.0",
-  "built_at": "1970-01-01T00:00:00+00:00",
-  "atoms": [],
+  "built_at": "2026-05-26T00:00:00+00:00",
+  "atoms": [
+    {
+      "id": "how-to-create-a-json-schema-atom",
+      "type": "tutorial",
+      "version": "0.1.0",
+      "path": "atoms/tutorial/how-to-create-a-json-schema-atom.json"
+    },
+    {
+      "id": "how-to-seed-a-catalog",
+      "type": "tutorial",
+      "version": "0.1.0",
+      "path": "atoms/tutorial/how-to-seed-a-catalog.json"
+    },
+    {
+      "id": "how-to-publish-a-persona",
+      "type": "tutorial",
+      "version": "0.1.0",
+      "path": "atoms/tutorial/how-to-publish-a-persona.json"
+    },
+    {
+      "id": "what-is-a-grammar-atom",
+      "type": "explanation",
+      "version": "0.1.0",
+      "path": "atoms/explanation/what-is-a-grammar-atom.json"
+    },
+    {
+      "id": "atoms-vs-compositions",
+      "type": "explanation",
+      "version": "0.1.0",
+      "path": "atoms/explanation/atoms-vs-compositions.json"
+    },
+    {
+      "id": "persona-vs-prompt-atoms",
+      "type": "explanation",
+      "version": "0.1.0",
+      "path": "atoms/explanation/persona-vs-prompt-atoms.json"
+    },
+    {
+      "id": "run-the-validator",
+      "type": "runbook",
+      "version": "0.1.0",
+      "path": "atoms/runbook/run-the-validator.json"
+    },
+    {
+      "id": "sign-atoms",
+      "type": "runbook",
+      "version": "0.1.0",
+      "path": "atoms/runbook/sign-atoms.json"
+    },
+    {
+      "id": "cut-a-release",
+      "type": "runbook",
+      "version": "0.1.0",
+      "path": "atoms/runbook/cut-a-release.json"
+    },
+    {
+      "id": "add-a-label-alias",
+      "type": "how-to",
+      "version": "0.1.0",
+      "path": "atoms/how-to/add-a-label-alias.json"
+    },
+    {
+      "id": "create-a-grammar-atom",
+      "type": "how-to",
+      "version": "0.1.0",
+      "path": "atoms/how-to/create-a-grammar-atom.json"
+    },
+    {
+      "id": "configure-terraform-backend",
+      "type": "how-to",
+      "version": "0.1.0",
+      "path": "atoms/how-to/configure-terraform-backend.json"
+    },
+    {
+      "id": "atoms-ecosystem-overview",
+      "type": "reference-guide",
+      "version": "0.1.0",
+      "path": "atoms/reference-guide/atoms-ecosystem-overview.json"
+    }
+  ],
   "compositions": []
 }

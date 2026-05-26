@@ -1,0 +1,18 @@
+{
+  "schema": "https://doc-atoms.com/schemas/atom-v1.json",
+  "type": "explanation",
+  "id": "persona-vs-prompt-atoms",
+  "version": "0.1.0",
+  "name": "Persona Atoms vs Prompt Atoms — The Distinction",
+  "summary": "Explains that persona-atoms defines identity (who the agent IS) while prompt-atoms defines fragments (what the agent SAYS), and why keeping them separate enables better composition.",
+  "audience": ["contributor", "developer", "operator"],
+  "tags": ["persona-atoms", "prompt-atoms", "catalog-design", "agent-assembly"],
+  "explanation_profile": {
+    "concept": "Separation of agent identity from prompt content in the atoms ecosystem",
+    "depth": "overview"
+  },
+  "body": {
+    "format": "markdown",
+    "inline": "## The question\n\nWhen you are creating content for an AI agent, you will repeatedly face the question: does this go in persona-atoms or prompt-atoms? The answer turns on a single distinction: **identity vs utterance**.\n\n## Persona atoms: who the agent IS\n\nA persona atom defines the stable, deployment-independent identity of an agent:\n- Its role and purpose\n- Its communication style and tone\n- Its behavioral constraints and invariants\n- What it will never do, regardless of instruction\n\nA persona does not change based on what task the agent is performing. If you find yourself writing a \"persona\" that is really just a system prompt for a specific workflow, that content belongs in prompt-atoms.\n\n**Persona atom example:** `customer-success-specialist` — a persona for an agent that handles customer queries with a warm, precise communication style and never commits to refunds without escalation approval.\n\n## Prompt atoms: what the agent SAYS\n\nA prompt atom (also called a prompt fragment) is a discrete, reusable piece of instructional text:\n- A reasoning instruction (\"think step by step before answering\")\n- A format constraint (\"always respond in JSON matching the following schema\")\n- A safety instruction (\"never include PII in your response\")\n- A task-specific instruction (\"when the user asks about billing, route to the billing FAQ\")\n\nPrompt fragments are composable: you combine several to build the instructional layer of an agent's system prompt. They are independent of identity — the same reasoning instruction can apply to many different personas.\n\n## Why the separation matters\n\n**Reuse.** A persona can be composed with many different prompt fragment sets across products. A prompt fragment can be composed with many different personas. Collapsing them into a single blob makes both harder to reuse and harder to audit.\n\n**Stability contracts.** Personas carry stronger stability guarantees than prompt fragments. Identity changes infrequently; instructional fragments are tuned more often. Keeping them separate lets each evolve at its own pace without entangling versioning.\n\n**Auditability.** When an agent produces an unexpected behavior, you want to know: is this an identity issue (wrong persona) or an instruction issue (wrong fragment)? The separation makes the diagnostic tractable.\n\n## Decision rule\n\n| Content | Catalog |\n|---|---|\n| Role, voice, constraints, behavioral invariants | persona-atoms |\n| Instructions, format rules, task guidance, safety guardrails | prompt-atoms |\n| Assembled agent with persona + fragments | composition-atoms |"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "schema": "https://doc-atoms.com/schemas/atom-v1.json",
+  "type": "runbook",
+  "id": "run-the-validator",
+  "version": "0.1.0",
+  "name": "Run the Catalog Validator",
+  "summary": "Runbook for running python3 scripts/validate.py (or validate_atoms.py) in any *-atoms catalog to confirm all atoms conform to the catalog schema.",
+  "audience": ["contributor", "operator"],
+  "tags": ["validator", "ci", "quality", "atoms-ecosystem"],
+  "runbook_profile": {
+    "scenario": "You need to confirm that all atoms in a catalog are valid before committing, opening a PR, or cutting a release.",
+    "severity": "info",
+    "escalation": "If the validator script itself errors (not an atom validation failure), open an issue in the affected catalog repo and ping the catalog maintainer."
+  },
+  "body": {
+    "format": "markdown",
+    "inline": "## Prerequisites\n\n- Python 3.10+\n- `pip install jsonschema` (or `pip install -r requirements.txt` if the repo has one)\n- Working directory is the catalog repo root\n\n## Procedure\n\n### Step 1: Confirm the validator script exists\n\n```bash\nls scripts/validate.py 2>/dev/null || ls scripts/validate_atoms.py 2>/dev/null\n```\n\nIf neither exists, the catalog may use a different validator. Check the `Makefile` for a `validate` or `lint` target.\n\n### Step 2: Run the validator\n\n```bash\npython3 scripts/validate.py\n```\n\nor, if the script is named differently:\n\n```bash\npython3 scripts/validate_atoms.py\n```\n\n### Step 3: Read the output\n\n**All atoms valid — expected output:**\n\n```\nValidating atoms...\n  ✓ atoms/tutorial/how-to-create-a-json-schema-atom.json\n  ✓ atoms/explanation/what-is-a-grammar-atom.json\n  ...\nAll N atoms valid.\n```\n\n**Validation failure — example output:**\n\n```\nValidating atoms...\n  ✗ atoms/tutorial/how-to-create-a-json-schema-atom.json\n    Additional properties are not allowed ('description' was unexpected)\n```\n\n### Step 4: Fix failures\n\nEach failure message names the file and the validation error. Common causes:\n\n| Error | Fix |\n|---|---|\n| `Additional properties are not allowed` | Remove the unexpected field or update the schema |\n| `'id' does not match pattern` | Ensure id is kebab-case, no slashes |\n| `'version' is a required property` | Add the `version` field |\n| `'type' is not one of [...]` | Check the enum values in atom-v1.json |\n\n### Step 5: Re-run after fixes\n\nRepeat until all atoms pass. The CI pipeline runs the same validator — local passage is a prerequisite for a green build.\n\n## Via Makefile (if available)\n\n```bash\nmake validate\n```\n\nCheck the `Makefile` target definition to understand what it runs if you need to debug.\n\n## Notes\n\n- The validator checks all `.json` files under `atoms/` against `schemas/atom-v1.json`.\n- Files in `exports/`, `keys/`, and `schemas/` are not validated as atoms.\n- The CI workflow in `.github/workflows/` runs this step automatically on every push and PR."
+  }
+}
